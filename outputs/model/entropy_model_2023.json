@@ -1,0 +1,496 @@
+{
+  "weights": {
+    "barrels": 0.0008651988174809343,
+    "barrels-per-capita": 0.0013293089261288455,
+    "biodiesel": 0.04675625427036185,
+    "biomass": 0.001102749704481256,
+    "btu": 0.0009419139020623086,
+    "btu-biofuels": 0.04452623940485472,
+    "btu-coal": 0.06771938208401991,
+    "btu-crude-oil": 0.08208004842339167,
+    "btu-natural-gas": 0.06549387130814549,
+    "btu-nuclear-electric-power": 0.031958185768586875,
+    "btu-other-renewables": 0.02618780844917013,
+    "btu-per-capita": 0.0013905385141631153,
+    "btu-total-primary-energy": 0.04209904033510762,
+    "btu-total-renewables": 0.016651023037898394,
+    "btu-wood-and-waste": 0.02044323296473665,
+    "cdd": 0.011618311107539471,
+    "co2-co2-co2-per-billion-btu": 0.003793374126059029,
+    "co2-co2-co2-per-million-dollars": 0.010463275328843525,
+    "co2-co2-per-capita": 0.001321888332854014,
+    "co2-co2-total-co2": 0.0009867480409353143,
+    "coal": 0.023109815334404125,
+    "coal-expenditures": 0.0016996127727677373,
+    "coal-prices": 0.005645699495376621,
+    "commercial": 0.0021845414679647146,
+    "commercial-sector": 0.0016820615751099554,
+    "crude-oil": 0.08208004412850507,
+    "cubic-feet": 0.0009942986838304372,
+    "cubic-feet-per-capita": 0.001246775693996401,
+    "current-dollar-gdp": 0.024199148367451632,
+    "electric-power": 0.0010385408791614812,
+    "electricity-expenditures": 0.0014322103688225829,
+    "electricity-prices": 0.0013894257803429395,
+    "expenditures": 0.00122987042150614,
+    "expenditures-per-capita": 0.006009375536113714,
+    "fuel-ethanol": 0.057475040054385036,
+    "gdp-energy-consumption-per-real-gdp": 0.0019293816534894283,
+    "gdp-expenditures": 0.0014422112142457668,
+    "gdp-expenditures-per-capita": 0.0014147585444108117,
+    "gdp-expenditures-per-gdp": 0.0033045599416779464,
+    "gdp-prices": 0.002360181676851458,
+    "gdp-real-gdp": 0.024629305627843847,
+    "gdp-total-consumption": 0.0009706016687569493,
+    "geothermal": 0.0008421915511637198,
+    "hdd": 0.00476843808576773,
+    "hydropower": 0.0010548587712494492,
+    "industrial": 0.0008887947550009575,
+    "industrial-sector": 0.0008424201546075896,
+    "natural-gas": 0.0010080104762208361,
+    "natural-gas-expenditures": 0.0011033670613818341,
+    "natural-gas-prices": 0.0008267528201484863,
+    "nuclear": 0.031958185768586875,
+    "nuclear-electric-power": 0.03195814397628791,
+    "petroleum": 0.02157390001548424,
+    "petroleum-expenditures": 0.0016283201028380065,
+    "petroleum-prices": 0.002875001226274124,
+    "prices": 0.002602266801728888,
+    "real-gdp": 0.024629305627843847,
+    "renewable-diesel": 0.07275870709335569,
+    "residential": 0.01964432736779137,
+    "residential-per-capita": 0.0048378082266610336,
+    "residential-sector": 0.001971629663525823,
+    "solar-energy": 0.0009055934136052286,
+    "total": 0.0011922777916330502,
+    "total-consumption": 0.0009705922601780701,
+    "total-per-capita": 0.0014292186892079974,
+    "total-population": 0.02142723357343114,
+    "total-renewable-energy": 0.017305034453995973,
+    "transportation": 0.0013666991999812395,
+    "transportation-sector": 0.0015532190297454789,
+    "wind-energy": 0.0008818483084673863
+  },
+  "feature_stats": {
+    "barrels": {
+      "minimum": 3420.0,
+      "maximum": 1591984.0,
+      "orientation": "cost",
+      "weight": 0.0008651988174809343
+    },
+    "barrels-per-capita": {
+      "minimum": 5.0,
+      "maximum": 83.6,
+      "orientation": "cost",
+      "weight": 0.0013293089261288455
+    },
+    "biodiesel": {
+      "minimum": 0.0,
+      "maximum": 8333.0,
+      "orientation": "benefit",
+      "weight": 0.04675625427036185
+    },
+    "biomass": {
+      "minimum": 1984.0,
+      "maximum": 612607.0,
+      "orientation": "cost",
+      "weight": 0.001102749704481256
+    },
+    "btu": {
+      "minimum": 22249.0,
+      "maximum": 6102164.5,
+      "orientation": "cost",
+      "weight": 0.0009419139020623086
+    },
+    "btu-biofuels": {
+      "minimum": 0.0,
+      "maximum": 611541.0,
+      "orientation": "benefit",
+      "weight": 0.04452623940485472
+    },
+    "btu-coal": {
+      "minimum": 0.0,
+      "maximum": 4133004.0,
+      "orientation": "benefit",
+      "weight": 0.06771938208401991
+    },
+    "btu-crude-oil": {
+      "minimum": 0.0,
+      "maximum": 11443509.0,
+      "orientation": "benefit",
+      "weight": 0.08208004842339167
+    },
+    "btu-natural-gas": {
+      "minimum": 0.0,
+      "maximum": 14311730.0,
+      "orientation": "benefit",
+      "weight": 0.06549387130814549
+    },
+    "btu-nuclear-electric-power": {
+      "minimum": 0.0,
+      "maximum": 1019691.0,
+      "orientation": "benefit",
+      "weight": 0.031958185768586875
+    },
+    "btu-other-renewables": {
+      "minimum": 811.0,
+      "maximum": 524902.0,
+      "orientation": "benefit",
+      "weight": 0.02618780844917013
+    },
+    "btu-per-capita": {
+      "minimum": 32.400000000000006,
+      "maximum": 487.75,
+      "orientation": "cost",
+      "weight": 0.0013905385141631153
+    },
+    "btu-total-primary-energy": {
+      "minimum": 1825.0,
+      "maximum": 27104730.0,
+      "orientation": "benefit",
+      "weight": 0.04209904033510762
+    },
+    "btu-total-renewables": {
+      "minimum": 1825.0,
+      "maximum": 782941.0,
+      "orientation": "benefit",
+      "weight": 0.016651023037898394
+    },
+    "btu-wood-and-waste": {
+      "minimum": 716.0,
+      "maximum": 231967.0,
+      "orientation": "benefit",
+      "weight": 0.02044323296473665
+    },
+    "cdd": {
+      "minimum": 19.0,
+      "maximum": 4755.0,
+      "orientation": "benefit",
+      "weight": 0.011618311107539471
+    },
+    "co2-co2-co2-per-billion-btu": {
+      "minimum": 38.4,
+      "maximum": 74.5,
+      "orientation": "cost",
+      "weight": 0.003793374126059029
+    },
+    "co2-co2-co2-per-million-dollars": {
+      "minimum": 16.8,
+      "maximum": 1351.6,
+      "orientation": "benefit",
+      "weight": 0.010463275328843525
+    },
+    "co2-co2-per-capita": {
+      "minimum": 3.6,
+      "maximum": 92.9,
+      "orientation": "cost",
+      "weight": 0.001321888332854014
+    },
+    "co2-co2-total-co2": {
+      "minimum": 2.5,
+      "maximum": 669.9,
+      "orientation": "cost",
+      "weight": 0.0009867480409353143
+    },
+    "coal": {
+      "minimum": 0.0,
+      "maximum": 273164.06666666665,
+      "orientation": "benefit",
+      "weight": 0.023109815334404125
+    },
+    "coal-expenditures": {
+      "minimum": 0.0,
+      "maximum": 2541.4,
+      "orientation": "cost",
+      "weight": 0.0016996127727677373
+    },
+    "coal-prices": {
+      "minimum": 0.0,
+      "maximum": 6.03,
+      "orientation": "cost",
+      "weight": 0.005645699495376621
+    },
+    "commercial": {
+      "minimum": 0.4,
+      "maximum": 21.4,
+      "orientation": "cost",
+      "weight": 0.0021845414679647146
+    },
+    "commercial-sector": {
+      "minimum": 5885.97,
+      "maximum": 393873.61,
+      "orientation": "cost",
+      "weight": 0.0016820615751099554
+    },
+    "crude-oil": {
+      "minimum": 0.0,
+      "maximum": 2011515.0,
+      "orientation": "benefit",
+      "weight": 0.08208004412850507
+    },
+    "cubic-feet": {
+      "minimum": 2983.0,
+      "maximum": 5196619.0,
+      "orientation": "cost",
+      "weight": 0.0009942986838304372
+    },
+    "cubic-feet-per-capita": {
+      "minimum": 2.1,
+      "maximum": 609.6,
+      "orientation": "cost",
+      "weight": 0.001246775693996401
+    },
+    "current-dollar-gdp": {
+      "minimum": 43533.8,
+      "maximum": 3870378.9,
+      "orientation": "benefit",
+      "weight": 0.024199148367451632
+    },
+    "electric-power": {
+      "minimum": 0.0,
+      "maximum": 185.3,
+      "orientation": "cost",
+      "weight": 0.0010385408791614812
+    },
+    "electricity-expenditures": {
+      "minimum": 940.4,
+      "maximum": 59189.0,
+      "orientation": "cost",
+      "weight": 0.0014322103688225829
+    },
+    "electricity-prices": {
+      "minimum": 23.54,
+      "maximum": 113.17,
+      "orientation": "cost",
+      "weight": 0.0013894257803429395
+    },
+    "expenditures": {
+      "minimum": 372.6,
+      "maximum": 61287.5,
+      "orientation": "cost",
+      "weight": 0.00122987042150614
+    },
+    "expenditures-per-capita": {
+      "minimum": 542.1,
+      "maximum": 1922.1,
+      "orientation": "cost",
+      "weight": 0.006009375536113714
+    },
+    "fuel-ethanol": {
+      "minimum": 0.0,
+      "maximum": 99690.0,
+      "orientation": "benefit",
+      "weight": 0.057475040054385036
+    },
+    "gdp-energy-consumption-per-real-gdp": {
+      "minimum": 0.93,
+      "maximum": 16.76,
+      "orientation": "cost",
+      "weight": 0.0019293816534894283
+    },
+    "gdp-expenditures": {
+      "minimum": 2545.6,
+      "maximum": 195099.6,
+      "orientation": "cost",
+      "weight": 0.0014422112142457668
+    },
+    "gdp-expenditures-per-capita": {
+      "minimum": 3703.7,
+      "maximum": 12155.9,
+      "orientation": "cost",
+      "weight": 0.0014147585444108117
+    },
+    "gdp-expenditures-per-gdp": {
+      "minimum": 1.44,
+      "maximum": 13.16,
+      "orientation": "benefit",
+      "weight": 0.0033045599416779464
+    },
+    "gdp-prices": {
+      "minimum": 12.42,
+      "maximum": 40.33,
+      "orientation": "cost",
+      "weight": 0.002360181676851458
+    },
+    "gdp-real-gdp": {
+      "minimum": 35236.6,
+      "maximum": 3248656.6,
+      "orientation": "benefit",
+      "weight": 0.024629305627843847
+    },
+    "gdp-total-consumption": {
+      "minimum": 113104.0,
+      "maximum": 14137451.0,
+      "orientation": "cost",
+      "weight": 0.0009706016687569493
+    },
+    "geothermal": {
+      "minimum": 21.0,
+      "maximum": 40578.0,
+      "orientation": "cost",
+      "weight": 0.0008421915511637198
+    },
+    "hdd": {
+      "minimum": 0.0,
+      "maximum": 10902.0,
+      "orientation": "benefit",
+      "weight": 0.00476843808576773
+    },
+    "hydropower": {
+      "minimum": 0.0,
+      "maximum": 209653.0,
+      "orientation": "cost",
+      "weight": 0.0010548587712494492
+    },
+    "industrial": {
+      "minimum": 0.0,
+      "maximum": 235.8,
+      "orientation": "cost",
+      "weight": 0.0008887947550009575
+    },
+    "industrial-sector": {
+      "minimum": 1096.7075,
+      "maximum": 1935230.8475,
+      "orientation": "cost",
+      "weight": 0.0008424201546075896
+    },
+    "natural-gas": {
+      "minimum": 50.666666666666664,
+      "maximum": 5603928.033333334,
+      "orientation": "cost",
+      "weight": 0.0010080104762208361
+    },
+    "natural-gas-expenditures": {
+      "minimum": 125.4,
+      "maximum": 27338.0,
+      "orientation": "cost",
+      "weight": 0.0011033670613818341
+    },
+    "natural-gas-prices": {
+      "minimum": 3.57,
+      "maximum": 46.08,
+      "orientation": "cost",
+      "weight": 0.0008267528201484863
+    },
+    "nuclear": {
+      "minimum": 0.0,
+      "maximum": 1019691.0,
+      "orientation": "benefit",
+      "weight": 0.031958185768586875
+    },
+    "nuclear-electric-power": {
+      "minimum": 0.0,
+      "maximum": 97559.0,
+      "orientation": "benefit",
+      "weight": 0.03195814397628791
+    },
+    "petroleum": {
+      "minimum": 8646.55,
+      "maximum": 3376333.8,
+      "orientation": "benefit",
+      "weight": 0.02157390001548424
+    },
+    "petroleum-expenditures": {
+      "minimum": 529.8,
+      "maximum": 115561.3,
+      "orientation": "cost",
+      "weight": 0.0016283201028380065
+    },
+    "petroleum-prices": {
+      "minimum": 16.56,
+      "maximum": 34.52,
+      "orientation": "cost",
+      "weight": 0.002875001226274124
+    },
+    "prices": {
+      "minimum": 25.47,
+      "maximum": 42.17,
+      "orientation": "cost",
+      "weight": 0.002602266801728888
+    },
+    "real-gdp": {
+      "minimum": 35236.6,
+      "maximum": 3248656.6,
+      "orientation": "benefit",
+      "weight": 0.024629305627843847
+    },
+    "renewable-diesel": {
+      "minimum": 0.0,
+      "maximum": 22405.0,
+      "orientation": "benefit",
+      "weight": 0.07275870709335569
+    },
+    "residential": {
+      "minimum": 1026.35,
+      "maximum": 84311.4,
+      "orientation": "benefit",
+      "weight": 0.01964432736779137
+    },
+    "residential-per-capita": {
+      "minimum": 1868.0,
+      "maximum": 6919.0,
+      "orientation": "benefit",
+      "weight": 0.0048378082266610336
+    },
+    "residential-sector": {
+      "minimum": 7690.679999999999,
+      "maximum": 398436.7075,
+      "orientation": "cost",
+      "weight": 0.001971629663525823
+    },
+    "solar-energy": {
+      "minimum": 12.0,
+      "maximum": 253676.0,
+      "orientation": "cost",
+      "weight": 0.0009055934136052286
+    },
+    "total": {
+      "minimum": 1721.852,
+      "maximum": 133617.074,
+      "orientation": "cost",
+      "weight": 0.0011922777916330502
+    },
+    "total-consumption": {
+      "minimum": 56639.2,
+      "maximum": 7068955.55,
+      "orientation": "cost",
+      "weight": 0.0009705922601780701
+    },
+    "total-per-capita": {
+      "minimum": 6109.0,
+      "maximum": 35742.0,
+      "orientation": "cost",
+      "weight": 0.0014292186892079974
+    },
+    "total-population": {
+      "minimum": 585.0,
+      "maximum": 39199.0,
+      "orientation": "benefit",
+      "weight": 0.02142723357343114
+    },
+    "total-renewable-energy": {
+      "minimum": 2795.0,
+      "maximum": 1065179.0,
+      "orientation": "benefit",
+      "weight": 0.017305034453995973
+    },
+    "transportation": {
+      "minimum": 1.0,
+      "maximum": 223.0,
+      "orientation": "cost",
+      "weight": 0.0013666991999812395
+    },
+    "transportation-sector": {
+      "minimum": 4470.6725,
+      "maximum": 850434.4199999999,
+      "orientation": "cost",
+      "weight": 0.0015532190297454789
+    },
+    "wind-energy": {
+      "minimum": 0.0,
+      "maximum": 408946.0,
+      "orientation": "cost",
+      "weight": 0.0008818483084673863
+    }
+  }
+}
