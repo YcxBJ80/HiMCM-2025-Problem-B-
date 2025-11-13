@@ -15,6 +15,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 try:
@@ -192,6 +193,9 @@ CATEGORY_EN_NAMES = {
     "碳排放类": "Carbon Emissions",
     "经济人口类": "Economy & Population",
     "气候环境类": "Climate & Environment",
+    "城市水资源类": "Urban Water Resources",
+    "航空出行类": "Air Travel Connectivity",
+    "废弃物管理类": "Waste Management",
 }
 
 
@@ -285,6 +289,272 @@ def plot_category_comparison(
         plt.tight_layout()
         plt.savefig(out_path, dpi=300)
         plt.close()
+
+
+def plot_category_score_distribution(
+    category_scores_dict: Dict[str, pd.Series],
+    out_path: Path,
+) -> None:
+    """绘制各分类分数的分布图。"""
+    valid_scores = {
+        CATEGORY_EN_NAMES.get(cat, cat): scores
+        for cat, scores in category_scores_dict.items()
+        if scores is not None
+    }
+    
+    if not valid_scores:
+        return
+    
+    fig, axes = plt.subplots(
+        len(valid_scores), 1, figsize=(10, 3 * len(valid_scores))
+    )
+    if len(valid_scores) == 1:
+        axes = [axes]
+    
+    for idx, (category_name, scores) in enumerate(valid_scores.items()):
+        if sns:
+            sns.histplot(scores, bins=15, kde=True, ax=axes[idx], color="#377eb8")
+        else:
+            axes[idx].hist(scores, bins=15, color="#377eb8", alpha=0.8)
+        axes[idx].set_xlabel("Score")
+        axes[idx].set_ylabel("Number of States")
+        axes[idx].set_title(f"{category_name} Score Distribution")
+        axes[idx].grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+
+
+def plot_composite_scores(
+    composite_scores: pd.Series,
+    out_path: Path,
+    top_k: int = 15,
+) -> None:
+    """绘制综合分数排名图。"""
+    top = composite_scores.sort_values(ascending=False).head(top_k).iloc[::-1]
+    plt.figure(figsize=(8, 6))
+    if sns:
+        sns.barplot(x=top.values, y=top.index, color="#009688")
+    else:
+        plt.barh(top.index, top.values)
+    plt.xlabel("Composite Score")
+    plt.ylabel("State")
+    plt.title(f"Top {top_k} States: Composite Scores")
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+
+
+def plot_category_indicator_weights(
+    category_weights_dict: Dict[str, pd.Series],
+    metadata: pd.DataFrame,
+    out_path: Path,
+    top_k: int = 10,
+) -> None:
+    """绘制各分类内指标权重图（每个分类的top指标）。"""
+    valid_categories = {
+        cat: weights
+        for cat, weights in category_weights_dict.items()
+        if weights is not None and len(weights) > 0
+    }
+    
+    if not valid_categories:
+        return
+    
+    n_categories = len(valid_categories)
+    fig, axes = plt.subplots(
+        n_categories, 1, figsize=(12, 4 * n_categories)
+    )
+    if n_categories == 1:
+        axes = [axes]
+    
+    for idx, (category, weights) in enumerate(valid_categories.items()):
+        category_en = CATEGORY_EN_NAMES.get(category, category)
+        
+        # 合并元数据
+        merged = (
+            weights.rename("weight")
+            .reset_index()
+            .rename(columns={"index": "indicator_id"})
+            .merge(metadata, how="left", on="indicator_id")
+        )
+        merged["indicator_label"] = merged["indicator_name"].fillna(
+            merged["indicator_id"]
+        )
+        top = merged.nlargest(top_k, "weight")
+        
+        if sns:
+            sns.barplot(
+                data=top, y="indicator_label", x="weight", ax=axes[idx], color="#4c72b0"
+            )
+        else:
+            axes[idx].barh(top["indicator_label"], top["weight"])
+        axes[idx].set_xlabel("Weight")
+        axes[idx].set_ylabel("")
+        axes[idx].set_title(f"Top {top_k} Indicators: {category_en}")
+        axes[idx].grid(True, alpha=0.3, axis="x")
+    
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+
+
+def plot_category_correlation(
+    category_scores_dict: Dict[str, pd.Series],
+    composite_scores: pd.Series,
+    out_path: Path,
+) -> None:
+    """绘制各分类分数与综合分数的相关性散点图。"""
+    valid_scores = {
+        CATEGORY_EN_NAMES.get(cat, cat): scores
+        for cat, scores in category_scores_dict.items()
+        if scores is not None
+    }
+    
+    if not valid_scores:
+        return
+    
+    n_categories = len(valid_scores)
+    cols = 2
+    rows = (n_categories + 1) // 2
+    fig, axes = plt.subplots(rows, cols, figsize=(12, 5 * rows))
+    axes = axes.flatten() if n_categories > 1 else [axes]
+    
+    for idx, (category_name, scores) in enumerate(valid_scores.items()):
+        # 对齐索引
+        common_states = scores.index.intersection(composite_scores.index)
+        cat_scores = scores[common_states]
+        comp_scores = composite_scores[common_states]
+        
+        # 计算相关系数
+        corr = cat_scores.corr(comp_scores)
+        
+        axes[idx].scatter(cat_scores, comp_scores, alpha=0.6, color="#377eb8")
+        axes[idx].set_xlabel(f"{category_name} Score")
+        axes[idx].set_ylabel("Composite Score")
+        axes[idx].set_title(f"{category_name} vs Composite (r={corr:.3f})")
+        axes[idx].grid(True, alpha=0.3)
+        
+        # 添加趋势线
+        z = np.polyfit(cat_scores, comp_scores, 1)
+        p = np.poly1d(z)
+        axes[idx].plot(
+            cat_scores.sort_values(),
+            p(cat_scores.sort_values()),
+            "r--",
+            alpha=0.8,
+            linewidth=2,
+        )
+    
+    # 隐藏多余的子图
+    for idx in range(n_categories, len(axes)):
+        axes[idx].set_visible(False)
+    
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+
+
+def plot_category_heatmap(
+    category_scores_dict: Dict[str, pd.Series],
+    top_k: int,
+    out_path: Path,
+) -> None:
+    """绘制各州在不同分类中的排名热力图。"""
+    valid_scores = {
+        CATEGORY_EN_NAMES.get(cat, cat): scores
+        for cat, scores in category_scores_dict.items()
+        if scores is not None
+    }
+    
+    if not valid_scores:
+        return
+    
+    # 获取所有州的排名
+    all_states = set()
+    for scores in valid_scores.values():
+        all_states.update(scores.head(top_k).index)
+    
+    # 构建排名矩阵
+    rank_data = []
+    for state in sorted(all_states)[:top_k]:
+        row = {"State": state}
+        for category_name, scores in valid_scores.items():
+            if state in scores.index:
+                # 计算排名（分数越高排名越靠前）
+                rank = (scores >= scores[state]).sum()
+                row[category_name] = rank
+            else:
+                row[category_name] = np.nan
+        rank_data.append(row)
+    
+    rank_df = pd.DataFrame(rank_data).set_index("State")
+    
+    plt.figure(figsize=(max(10, len(valid_scores) * 2), max(6, top_k * 0.5)))
+    if sns:
+        sns.heatmap(
+            rank_df.T,
+            annot=True,
+            fmt=".0f",
+            cmap="YlOrRd",
+            cbar_kws={"label": "Rank (lower is better)"},
+            linewidths=0.5,
+        )
+    else:
+        # 简单的热力图
+        plt.imshow(rank_df.T.values, cmap="YlOrRd", aspect="auto")
+        plt.colorbar(label="Rank (lower is better)")
+        plt.xticks(range(len(rank_df.index)), rank_df.index, rotation=45)
+        plt.yticks(range(len(rank_df.columns)), rank_df.columns)
+    
+    plt.xlabel("State")
+    plt.ylabel("Category")
+    plt.title(f"Top {top_k} States: Category Rankings Heatmap")
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+
+
+def plot_category_boxplot(
+    category_scores_dict: Dict[str, pd.Series],
+    out_path: Path,
+) -> None:
+    """绘制各分类分数的箱线图对比。"""
+    valid_scores = {
+        CATEGORY_EN_NAMES.get(cat, cat): scores
+        for cat, scores in category_scores_dict.items()
+        if scores is not None
+    }
+    
+    if not valid_scores:
+        return
+    
+    # 准备数据
+    plot_data = []
+    for category_name, scores in valid_scores.items():
+        for state, score in scores.items():
+            plot_data.append({"Category": category_name, "Score": score})
+    
+    plot_df = pd.DataFrame(plot_data)
+    
+    plt.figure(figsize=(10, 6))
+    if sns:
+        sns.boxplot(data=plot_df, x="Category", y="Score", palette="Set2")
+        sns.stripplot(
+            data=plot_df, x="Category", y="Score", color="black", alpha=0.3, size=3
+        )
+    else:
+        categories = plot_df["Category"].unique()
+        data_list = [plot_df[plot_df["Category"] == cat]["Score"].values for cat in categories]
+        plt.boxplot(data_list, labels=categories)
+    plt.xlabel("Category")
+    plt.ylabel("Score")
+    plt.title("Category Score Distribution Comparison")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
 
 
 def serialize_category_results(
@@ -471,6 +741,33 @@ def main() -> None:
         15,
         dirs["figures"] / f"category_comparison_{args.year}.png",
     )
+    plot_category_score_distribution(
+        category_scores_dict,
+        dirs["figures"] / f"category_score_distribution_{args.year}.png",
+    )
+    plot_composite_scores(
+        composite_scores,
+        dirs["figures"] / f"composite_scores_top_{args.year}.png",
+    )
+    plot_category_indicator_weights(
+        category_weights_dict,
+        metadata,
+        dirs["figures"] / f"category_indicator_weights_{args.year}.png",
+    )
+    plot_category_correlation(
+        category_scores_dict,
+        composite_scores,
+        dirs["figures"] / f"category_correlation_{args.year}.png",
+    )
+    plot_category_heatmap(
+        category_scores_dict,
+        15,
+        dirs["figures"] / f"category_heatmap_{args.year}.png",
+    )
+    plot_category_boxplot(
+        category_scores_dict,
+        dirs["figures"] / f"category_boxplot_{args.year}.png",
+    )
 
     # 保存摘要
     summary = {
@@ -491,4 +788,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

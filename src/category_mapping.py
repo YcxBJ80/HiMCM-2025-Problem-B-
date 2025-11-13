@@ -116,6 +116,45 @@ CATEGORY_KEYWORDS = {
         ],
         "exclude_keywords": [],
     },
+    "城市水资源类": {
+        "keywords": [
+            "water withdrawals",
+            "irrigation",
+            "public supply",
+            "thermoelectric",
+            "industrial water",
+        ],
+        "exclude_keywords": [],
+    },
+    "航空出行类": {
+        "keywords": [
+            "enplanement",
+            "airport",
+            "air travel",
+            "airports",
+        ],
+        "exclude_keywords": [],
+    },
+    "废弃物管理类": {
+        "keywords": [
+            "waste",
+            "recycling",
+            "composting",
+        ],
+        "exclude_keywords": [],
+    },
+}
+
+INDICATOR_CATEGORY_OVERRIDES = {
+    "city-water-use-cbsa-ps-wtotl": "城市水资源类",
+    "city-water-use-cbsa-ir-irtot": "城市水资源类",
+    "city-water-use-cbsa-to-wtotl": "城市水资源类",
+    "city-water-use-cbsa-pt-wtotl": "城市水资源类",
+    "city-water-use-cbsa-in-wtotl": "城市水资源类",
+    "airtravel-cy2023-cy23-enplanements": "航空出行类",
+    "airtravel-cy2023-cy22-enplanements": "航空出行类",
+    "airtravel-cy2023-enplanement-growth": "航空出行类",
+    "airtravel-cy2023-airport-count": "航空出行类",
 }
 
 
@@ -173,6 +212,9 @@ def classify_indicators(
     """
     classification = {}
     for indicator_id, indicator_name in indicator_names.items():
+        if indicator_id in INDICATOR_CATEGORY_OVERRIDES:
+            classification[indicator_id] = INDICATOR_CATEGORY_OVERRIDES[indicator_id]
+            continue
         category = classify_indicator(indicator_name)
         
         # 如果无法通过名称分类，尝试使用元数据中的单位信息
@@ -226,4 +268,3 @@ def get_category_indicators(
         for indicator_id, cat in classification.items()
         if cat == category
     ]
-

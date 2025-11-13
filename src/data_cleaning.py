@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
+import numpy as np
 import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
@@ -23,6 +24,184 @@ class IndicatorFrame:
     indicator_name: str
     unit: str
     frame: pd.DataFrame
+
+
+ENVIRONMENT_WORKBOOK_NAME = "副本环境数据汇总.xlsx"
+# 这些环境外部数据只提供最近年度的截面值，统一映射到2023年
+ENVIRONMENT_DEFAULT_YEAR = 2023
+STATE_WASTE_WORKBOOK_NAME = "State Waste Data.xlsx"
+VALID_STATE_CODES = {
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+    "DC",
+}
+CITY_WATER_COLUMN_METADATA = {
+    "PS-Wtotl": {
+        "name": "City water withdrawals – public supply",
+        "unit": "million gallons per day (MGD)",
+    },
+    "IR-IrTot": {
+        "name": "City water withdrawals – irrigation",
+        "unit": "million gallons per day (MGD)",
+    },
+    "TO-Wtotl": {
+        "name": "City water withdrawals – total withdrawals",
+        "unit": "million gallons per day (MGD)",
+    },
+    "PT-Wtotl": {
+        "name": "City water withdrawals – thermoelectric power",
+        "unit": "million gallons per day (MGD)",
+    },
+    "IN-Wtotl": {
+        "name": "City water withdrawals – industrial",
+        "unit": "million gallons per day (MGD)",
+    },
+}
+AIR_TRAVEL_COLUMN_METADATA = {
+    "cy23_enplanements": {
+        "name": "Commercial enplanements (CY 2023)",
+        "unit": "passengers",
+    },
+    "cy22_enplanements": {
+        "name": "Commercial enplanements (CY 2022 baseline)",
+        "unit": "passengers",
+    },
+    "enplanement_growth": {
+        "name": "Commercial enplanement growth rate (2023 vs 2022)",
+        "unit": "share",
+    },
+    "airport_count": {
+        "name": "Number of commercial airports with scheduled service",
+        "unit": "count",
+    },
+}
+STATE_NAME_TO_CODE = {
+    "alabama": "AL",
+    "alaska": "AK",
+    "arizona": "AZ",
+    "arkansas": "AR",
+    "california": "CA",
+    "colorado": "CO",
+    "connecticut": "CT",
+    "delaware": "DE",
+    "district of columbia": "DC",
+    "washington dc": "DC",
+    "washington d.c": "DC",
+    "florida": "FL",
+    "georgia": "GA",
+    "hawaii": "HI",
+    "idaho": "ID",
+    "illinois": "IL",
+    "indiana": "IN",
+    "iowa": "IA",
+    "kansas": "KS",
+    "kentucky": "KY",
+    "louisiana": "LA",
+    "maine": "ME",
+    "maryland": "MD",
+    "massachusetts": "MA",
+    "michigan": "MI",
+    "minnesota": "MN",
+    "mississippi": "MS",
+    "missouri": "MO",
+    "montana": "MT",
+    "nebraska": "NE",
+    "nevada": "NV",
+    "new hampshire": "NH",
+    "new jersey": "NJ",
+    "new mexico": "NM",
+    "new york": "NY",
+    "north carolina": "NC",
+    "north dakota": "ND",
+    "ohio": "OH",
+    "oklahoma": "OK",
+    "oregon": "OR",
+    "pennsylvania": "PA",
+    "rhode island": "RI",
+    "south carolina": "SC",
+    "south dakota": "SD",
+    "tennessee": "TN",
+    "tenessee": "TN",
+    "texas": "TX",
+    "utah": "UT",
+    "vermont": "VT",
+    "virginia": "VA",
+    "washington": "WA",
+    "west virginia": "WV",
+    "wisconsin": "WI",
+    "wyoming": "WY",
+}
+STATE_WASTE_COLUMN_METADATA = {
+    "Recycling Rate if reported/calculatable": {
+        "name": "Municipal solid waste recycling rate",
+        "unit": "share of total MSW",
+    },
+    "Total MSW Generated (tons)": {
+        "name": "Municipal solid waste generated",
+        "unit": "short tons",
+    },
+    "Landfilled/Disposed MSW (tons)": {
+        "name": "Municipal solid waste landfilled or disposed",
+        "unit": "short tons",
+    },
+    "Recycled MSW (tons)": {
+        "name": "Municipal solid waste recycled",
+        "unit": "short tons",
+    },
+}
+SUPPLEMENTAL_INDICATOR_PREFIXES = (
+    "city-water-use-cbsa",
+    "airtravel-cy2023",
+    "state-waste-data",
+)
 
 
 def slugify(label: str) -> str:
@@ -124,13 +303,262 @@ def _read_indicator(file_path: Path, sheet_name: str) -> IndicatorFrame:
     )
 
 
+def _extract_state_codes(title: str) -> List[str]:
+    if not isinstance(title, str):
+        return []
+    if "," in title:
+        suffix = title.split(",")[-1]
+    else:
+        suffix = title
+    suffix = (
+        suffix.replace(".", "")
+        .replace("–", "-")
+        .replace("—", "-")
+        .replace("/", "-")
+        .strip()
+    )
+    suffix = re.sub(r"\s+", "", suffix)
+    if not suffix:
+        return []
+    codes = []
+    for token in suffix.split("-"):
+        token = token.strip().upper()
+        if token in VALID_STATE_CODES:
+            codes.append(token)
+    return codes
+
+
+def _state_name_to_code(name: object) -> Optional[str]:
+    """Map a state name or code-like value to a two-letter state code."""
+
+    if not isinstance(name, str):
+        return None
+    normalized = (
+        name.strip()
+        .replace(".", "")
+        .replace("–", " ")
+        .replace("—", " ")
+        .replace("-", " ")
+    )
+    normalized = re.sub(r"\s+", " ", normalized)
+    if not normalized:
+        return None
+    upper = normalized.upper()
+    if len(upper) == 2 and upper in VALID_STATE_CODES:
+        return upper
+    lowered = normalized.lower()
+    code = STATE_NAME_TO_CODE.get(lowered)
+    if code:
+        return code
+    lowered_alpha = re.sub(r"[^a-z ]", " ", lowered)
+    lowered_alpha = re.sub(r"\s+", " ", lowered_alpha).strip()
+    return STATE_NAME_TO_CODE.get(lowered_alpha)
+
+
+def _load_city_water_indicators(workbook: Path) -> List[IndicatorFrame]:
+    sheet_name = "City_Water_Use_CBSA"
+    try:
+        df = pd.read_excel(workbook, sheet_name=sheet_name)
+    except ValueError:
+        LOGGER.warning("Worksheet %s missing in %s", sheet_name, workbook.name)
+        return []
+    required_cols = ["cbsatitle", *CITY_WATER_COLUMN_METADATA.keys()]
+    missing = [col for col in required_cols if col not in df.columns]
+    if missing:
+        LOGGER.warning(
+            "Skip %s - %s missing columns %s", workbook.name, sheet_name, ", ".join(missing)
+        )
+        return []
+    df = df.dropna(subset=["cbsatitle"]).copy()
+    df["state_codes"] = df["cbsatitle"].apply(_extract_state_codes)
+    df["state_count"] = df["state_codes"].apply(len)
+    df = df[df["state_count"] > 0].copy()
+    if df.empty:
+        return []
+    df["weight"] = 1.0 / df["state_count"]
+    expanded = df.loc[:, ["state_codes", "weight"] + list(CITY_WATER_COLUMN_METADATA.keys())].copy()
+    expanded = expanded.explode("state_codes")
+    expanded = expanded.rename(columns={"state_codes": "region"})
+    for col in CITY_WATER_COLUMN_METADATA.keys():
+        expanded[col] = pd.to_numeric(expanded[col], errors="coerce") * expanded["weight"]
+    grouped = (
+        expanded.groupby("region")[list(CITY_WATER_COLUMN_METADATA.keys())]
+        .sum()
+        .reset_index()
+    )
+    frames: List[IndicatorFrame] = []
+    for column, meta in CITY_WATER_COLUMN_METADATA.items():
+        series = grouped[["region", column]].dropna(subset=[column])
+        if series.empty:
+            continue
+        indicator_id = slugify(f"{workbook.stem}-{sheet_name}-{column}")
+        tidy = pd.DataFrame(
+            {
+                "indicator_id": indicator_id,
+                "region": series["region"],
+                "year": ENVIRONMENT_DEFAULT_YEAR,
+                "value": series[column],
+            }
+        )
+        frames.append(
+            IndicatorFrame(
+                workbook=workbook.name,
+                sheet=sheet_name,
+                indicator_id=indicator_id,
+                indicator_name=meta["name"],
+                unit=meta["unit"],
+                frame=tidy,
+            )
+        )
+    return frames
+
+
+def _load_air_travel_indicators(workbook: Path) -> List[IndicatorFrame]:
+    sheet_name = "AirTravel_CY2023"
+    try:
+        df = pd.read_excel(workbook, sheet_name=sheet_name)
+    except ValueError:
+        LOGGER.warning("Worksheet %s missing in %s", sheet_name, workbook.name)
+        return []
+    required_cols = ["ST", "CY 23 Enplanements", "CY 22 Enplanements"]
+    missing = [col for col in required_cols if col not in df.columns]
+    if missing:
+        LOGGER.warning(
+            "Skip %s - %s missing columns %s", workbook.name, sheet_name, ", ".join(missing)
+        )
+        return []
+    df = df.dropna(subset=["ST"]).copy()
+    df["state"] = df["ST"].astype(str).str.strip().str.upper()
+    df = df[df["state"].isin(VALID_STATE_CODES)].copy()
+    if df.empty:
+        return []
+    df["cy23"] = pd.to_numeric(df["CY 23 Enplanements"], errors="coerce").fillna(0)
+    df["cy22"] = pd.to_numeric(df["CY 22 Enplanements"], errors="coerce").fillna(0)
+    state_group = df.groupby("state").agg(
+        cy23_enplanements=("cy23", "sum"),
+        cy22_enplanements=("cy22", "sum"),
+        airport_count=("state", "size"),
+    )
+    state_group["enplanement_growth"] = np.where(
+        state_group["cy22_enplanements"] > 0,
+        (state_group["cy23_enplanements"] - state_group["cy22_enplanements"])
+        / state_group["cy22_enplanements"],
+        np.nan,
+    )
+    state_group = state_group.reset_index().rename(columns={"state": "region"})
+    frames: List[IndicatorFrame] = []
+    for column, meta in AIR_TRAVEL_COLUMN_METADATA.items():
+        series = state_group[["region", column]].dropna(subset=[column])
+        if series.empty:
+            continue
+        indicator_id = slugify(f"{workbook.stem}-{sheet_name}-{column}")
+        tidy = pd.DataFrame(
+            {
+                "indicator_id": indicator_id,
+                "region": series["region"],
+                "year": ENVIRONMENT_DEFAULT_YEAR,
+                "value": series[column],
+            }
+        )
+        frames.append(
+            IndicatorFrame(
+                workbook=workbook.name,
+                sheet=sheet_name,
+                indicator_id=indicator_id,
+                indicator_name=meta["name"],
+                unit=meta["unit"],
+                frame=tidy,
+            )
+        )
+    return frames
+
+
+def _load_waste_indicators(workbook: Path) -> List[IndicatorFrame]:
+    if workbook.name != STATE_WASTE_WORKBOOK_NAME:
+        return []
+    sheet_name = "Raw Data Table"
+    try:
+        df = pd.read_excel(workbook, sheet_name=sheet_name, header=1)
+    except ValueError:
+        LOGGER.warning("Worksheet %s missing in %s", sheet_name, workbook.name)
+        return []
+    if "State/Territory" not in df.columns:
+        LOGGER.warning(
+            "Skip %s - %s missing 'State/Territory' column", workbook.name, sheet_name
+        )
+        return []
+    df = df.copy()
+    df = df[df["State/Territory"].notna()].copy()
+    df["state_name"] = df["State/Territory"].astype(str).str.strip()
+    df = df[df["state_name"] != ""]
+    df["region"] = df["state_name"].apply(_state_name_to_code)
+    missing_states = sorted(df.loc[df["region"].isna(), "state_name"].dropna().unique())
+    if missing_states:
+        LOGGER.warning(
+            "Waste data rows skipped due to unknown states: %s", ", ".join(missing_states)
+        )
+    df = df[df["region"].notna()].copy()
+    if df.empty:
+        LOGGER.warning("All waste rows skipped after state normalization in %s", workbook.name)
+        return []
+    if "Data year" in df.columns:
+        df["source_year"] = pd.to_numeric(df["Data year"], errors="coerce").astype("Int64")
+    else:
+        df["source_year"] = pd.Series(pd.NA, index=df.index, dtype="Int64")
+    df["year"] = ENVIRONMENT_DEFAULT_YEAR
+
+    frames: List[IndicatorFrame] = []
+    for column, meta in STATE_WASTE_COLUMN_METADATA.items():
+        if column not in df.columns:
+            LOGGER.warning(
+                "Skip %s - %s missing column '%s'", workbook.name, sheet_name, column
+            )
+            continue
+        numeric = pd.to_numeric(df[column], errors="coerce")
+        mask = ~numeric.isna()
+        if not mask.any():
+            continue
+        indicator_id = slugify(f"{workbook.stem}-{sheet_name}-{column}")
+        tidy = df.loc[mask, ["region", "year", "source_year"]].copy()
+        tidy.insert(0, "indicator_id", indicator_id)
+        tidy["value"] = numeric.loc[mask].astype(float).values
+        frames.append(
+            IndicatorFrame(
+                workbook=workbook.name,
+                sheet=sheet_name,
+                indicator_id=indicator_id,
+                indicator_name=meta["name"],
+                unit=meta["unit"],
+                frame=tidy.loc[:, ["indicator_id", "region", "year", "value", "source_year"]],
+            )
+        )
+    return frames
+
+
+def _load_environment_indicator_frames(workbook: Path) -> List[IndicatorFrame]:
+    if not workbook.exists():
+        return []
+    frames: List[IndicatorFrame] = []
+    frames.extend(_load_city_water_indicators(workbook))
+    frames.extend(_load_air_travel_indicators(workbook))
+    frames.extend(_load_waste_indicators(workbook))
+    return frames
+
+
 def load_all_indicators(data_dir: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Load all Excel files in data_dir and return (long data, metadata)."""
 
     records: List[pd.DataFrame] = []
     metadata_rows: List[Dict[str, object]] = []
 
+    env_workbook = data_dir / ENVIRONMENT_WORKBOOK_NAME
+    waste_workbook = data_dir / STATE_WASTE_WORKBOOK_NAME
     for workbook in sorted(data_dir.glob("*.xlsx")):
+        if workbook.name.startswith("~$") or workbook.name.startswith(".~"):
+            LOGGER.debug("Skip temporary workbook %s", workbook.name)
+            continue
+        if workbook.name in {ENVIRONMENT_WORKBOOK_NAME, STATE_WASTE_WORKBOOK_NAME}:
+            continue
         xl = pd.ExcelFile(workbook)
         for sheet_name in xl.sheet_names:
             if sheet_name.lower() == "contents":
@@ -140,6 +568,40 @@ def load_all_indicators(data_dir: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
             except Exception as exc:  # pragma: no cover - diagnostic path
                 LOGGER.warning("Skip %s - %s (%s)", workbook.name, sheet_name, exc)
                 continue
+            records.append(indicator.frame)
+            metadata_rows.append(
+                {
+                    "indicator_id": indicator.indicator_id,
+                    "indicator_name": indicator.indicator_name,
+                    "unit": indicator.unit,
+                    "workbook": indicator.workbook,
+                    "sheet": indicator.sheet,
+                    "min_year": indicator.frame["year"].min(),
+                    "max_year": indicator.frame["year"].max(),
+                    "observations": len(indicator.frame),
+                }
+            )
+    if env_workbook.exists():
+        LOGGER.info("Loading supplemental environment indicators from %s", env_workbook.name)
+        env_frames = _load_environment_indicator_frames(env_workbook)
+        for indicator in env_frames:
+            records.append(indicator.frame)
+            metadata_rows.append(
+                {
+                    "indicator_id": indicator.indicator_id,
+                    "indicator_name": indicator.indicator_name,
+                    "unit": indicator.unit,
+                    "workbook": indicator.workbook,
+                    "sheet": indicator.sheet,
+                    "min_year": indicator.frame["year"].min(),
+                    "max_year": indicator.frame["year"].max(),
+                    "observations": len(indicator.frame),
+                }
+            )
+    if waste_workbook.exists():
+        LOGGER.info("Loading supplemental waste indicators from %s", waste_workbook.name)
+        waste_frames = _load_waste_indicators(waste_workbook)
+        for indicator in waste_frames:
             records.append(indicator.frame)
             metadata_rows.append(
                 {

@@ -35,6 +35,8 @@ def guess_orientation(name: str) -> str:
         "consumption",
         "spending",
         "cost",
+        "withdrawal",
+        "waste",
     ]
     if any(token in lowered for token in positive):
         return "benefit"
