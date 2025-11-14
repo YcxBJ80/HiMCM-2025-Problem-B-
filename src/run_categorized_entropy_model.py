@@ -215,6 +215,7 @@ CATEGORY_EN_NAMES = {
     "航空出行类": "Air Travel Connectivity",
     "废弃物管理类": "Waste Management",
     "比赛因素类": "Sports Event Factors",
+    "比赛间交通时间类": "Inter-Match Transportation Time",
 }
 
 

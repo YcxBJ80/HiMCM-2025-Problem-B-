@@ -31,13 +31,13 @@ co2-co2-co2-per-million-dollars,Carbon intensity of economy (CO2 emissions divid
 co2-co2-per-capita,Per capita energy-related CO2 emissions,metric tons CO2,CO2 总排放量、人均 CO2 排放量和碳强度.xlsx,Per capita,1960,2023,3328
 co2-co2-total-co2,Total energy CO2 emissions,million metric tons CO2,CO2 总排放量、人均 CO2 排放量和碳强度.xlsx,Total CO2,1960,2023,3328
 coal,Coal total CO2 emissions,million metric tons CO2,按来源划分的二氧化碳排放总量.xlsx,Coal,1960,2023,3328
-coal,Coal production,thousand short tons,以物理单位计算的一次能源生产——化石燃料和核能.xlsx,Coal,1960,2023,3328
 coal,Coal total consumption,billion Btu,按来源划分的一次能源消耗.xlsx,Coal,1960,2023,3328
+coal,Coal production,thousand short tons,以物理单位计算的一次能源生产——化石燃料和核能.xlsx,Coal,1960,2023,3328
 coal-expenditures,Coal total expenditures,million dollars,向最终客户销售煤炭和电力的价格和支出.xlsx,Coal expenditures,1970,2023,2808
 coal-prices,Coal average price,"all sectors, dollars per million Btu",向最终客户销售煤炭和电力的价格和支出.xlsx,Coal prices,1970,2023,2808
 commercial,Total energy CO2 emissions for the commercial sector,million metric tons of CO2,按部门划分的二氧化碳排放总量.xlsx,Commercial,1960,2023,3328
-commercial-sector,Total energy average price in the commercial sector,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Commercial sector,1970,2023,2808
 commercial-sector,Total energy consumption per capita in the commercial sector,million Btu,按最终用途部门分列的人均能源消耗总量.xlsx,Commercial sector,1960,2023,3328
+commercial-sector,Total energy average price in the commercial sector,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Commercial sector,1970,2023,2808
 commercial-sector,Total energy expenditures in the commercial sector,million dollars,按最终用途部门分列的能源总支出.xlsx,Commercial sector,1970,2023,2808
 commercial-sector,Total energy consumption in the commercial sector,billion Btu,按最终用途部门划分的总能源消耗.xlsx,Commercial sector,1960,2023,3328
 crude-oil,Crude oil production (including lease condensate),thousand barrels,以物理单位计算的一次能源生产——化石燃料和核能.xlsx,Crude oil,1960,2023,3456
@@ -61,20 +61,20 @@ geothermal,Geothermal total consumption,billion Btu,按来源划分的可再生�
 hdd,Heating degree days,days,能源系列指标.xlsx,HDD,1960,2023,3328
 hydropower,Hydropower total consumption,billion Btu,按来源划分的可再生能源消费.xlsx,Hydropower,1960,2023,3328
 industrial,Total energy CO2 emissions for the industrial sector,million metric tons of CO2,按部门划分的二氧化碳排放总量.xlsx,Industrial,1960,2023,3328
-industrial-sector,Total energy average price in the industrial sector,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Industrial sector,1970,2023,2808
-industrial-sector,Total energy expenditures in the industrial sector,million dollars,按最终用途部门分列的能源总支出.xlsx,Industrial sector,1970,2023,2808
 industrial-sector,Total energy consumption in the industrial sector,billion Btu,按最终用途部门划分的总能源消耗.xlsx,Industrial sector,1960,2023,3328
 industrial-sector,Total energy consumption per capita in the industrial sector,million Btu,按最终用途部门分列的人均能源消耗总量.xlsx,Industrial sector,1960,2023,3328
+industrial-sector,Total energy expenditures in the industrial sector,million dollars,按最终用途部门分列的能源总支出.xlsx,Industrial sector,1970,2023,2808
+industrial-sector,Total energy average price in the industrial sector,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Industrial sector,1970,2023,2808
 natural-gas,Natural gas,"excluding supplemental gaseous fuels, total CO2 emissions, million metric tons CO2",按来源划分的二氧化碳排放总量.xlsx,Natural gas,1960,2023,3328
-natural-gas,Natural gas total consumption (excluding supplemental gaseous fuels),billion Btu,按来源划分的一次能源消耗.xlsx,Natural gas,1960,2023,3328
 natural-gas,Natural gas marketed production,million cubic feet,以物理单位计算的一次能源生产——化石燃料和核能.xlsx,Natural gas,1960,2023,3392
+natural-gas,Natural gas total consumption (excluding supplemental gaseous fuels),billion Btu,按来源划分的一次能源消耗.xlsx,Natural gas,1960,2023,3328
 natural-gas-expenditures,Natural gas total expenditures,million dollars,石油和天然气价格和支出.xlsx,Natural gas expenditures,1970,2023,2808
 natural-gas-prices,Natural gas average price,"all sectors, dollars per million Btu",石油和天然气价格和支出.xlsx,Natural gas prices,1970,2023,2808
 nuclear,Nuclear energy consumed for electricity generation,"total, billion Btu",按来源划分的一次能源消耗.xlsx,Nuclear,1960,2023,3328
 nuclear-electric-power,Nuclear electricity net generation in the electric power sector,million kilowatthours,以物理单位计算的一次能源生产——化石燃料和核能.xlsx,Nuclear electric power,1960,2023,3328
 other-biofuels,Other biofuels production,"United States, thousand barrels",物理单元的一次能源生产——生物燃料.xlsx,Other biofuels,1960,2023,64
-petroleum,Petroleum,"excluding biofuels, total CO2 emissions, million metric tons CO2",按来源划分的二氧化碳排放总量.xlsx,Petroleum,1960,2023,3328
 petroleum,All petroleum products total consumption,"excluding biofuels, billion Btu",按来源划分的一次能源消耗.xlsx,Petroleum,1960,2023,3328
+petroleum,Petroleum,"excluding biofuels, total CO2 emissions, million metric tons CO2",按来源划分的二氧化碳排放总量.xlsx,Petroleum,1960,2023,3328
 petroleum-expenditures,All petroleum products total expenditures,million dollars,石油和天然气价格和支出.xlsx,Petroleum expenditures,1970,2023,2808
 petroleum-prices,All petroleum products average price,"all sectors, dollars per million Btu",石油和天然气价格和支出.xlsx,Petroleum prices,1970,2023,2808
 prices,Motor gasoline average price,"all sectors, dollars per million Btu",车用汽油价格和支出.xlsx,Prices,1970,2023,2808
@@ -84,10 +84,12 @@ residential,Total energy CO2 emissions for the residential sector,million metric
 residential,Electricity consumed by (sales to ultimate customers in) the residential sector,million kilowatthours,向最终客户销售电力、总和住宅、总和人均.xlsx,Residential,1960,2023,3328
 residential-per-capita,Electricity consumed by (sales to ultimate customers in) the residential sector per capita,kilowatthours,向最终客户销售电力、总和住宅、总和人均.xlsx,Residential per capita,1960,2023,3328
 residential-sector,Total energy consumption in the residential sector,billion Btu,按最终用途部门划分的总能源消耗.xlsx,Residential sector,1960,2023,3328
-residential-sector,Total energy consumption per capita in the residential sector,million Btu,按最终用途部门分列的人均能源消耗总量.xlsx,Residential sector,1960,2023,3328
 residential-sector,Total energy average price in the residential sector,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Residential sector,1970,2023,2808
 residential-sector,Total energy expenditures in the residential sector,million dollars,按最终用途部门分列的能源总支出.xlsx,Residential sector,1970,2023,2808
+residential-sector,Total energy consumption per capita in the residential sector,million Btu,按最终用途部门分列的人均能源消耗总量.xlsx,Residential sector,1960,2023,3328
 solar-energy,Solar energy total consumption,billion Btu,按来源划分的可再生能源消费.xlsx,Solar energy,1960,2023,3328
+sports-factors-avg-driving-time-to-nfl-states,Average driving time to other NFL states,seconds,state_transport_stats.csv,driving_times,2023,2023,23
+sports-factors-avg-flight-time-to-nfl-states,Average flight time to other NFL states,seconds,state_transport_stats.csv,flight_times,2023,2023,23
 sports-factors-nfl-stadium-capacity,NFL stadium average capacity,seats,nfl_stadium_capacity.csv,data,2023,2023,23
 sports-factors-peak-public-transport-capacity,Peak public transportation capacity,passengers per hour,peak_capacity_by_state_2023.csv,data,2023,2023,56
 sports-factors-stadium-hotel-distance-avg,Average distance from NFL stadium to nearest hotels,meters,nfl_stadium_hotels_from_gmaps.csv,data,2023,2023,22
@@ -96,18 +98,18 @@ state-waste-data-raw-data-table-recycled-msw-tons,Municipal solid waste recycled
 state-waste-data-raw-data-table-recycling-rate-if-reported-calculatable,Municipal solid waste recycling rate,share of total MSW,State Waste Data.xlsx,Raw Data Table,2023,2023,25
 state-waste-data-raw-data-table-total-msw-generated-tons,Municipal solid waste generated,short tons,State Waste Data.xlsx,Raw Data Table,2023,2023,28
 total,Total energy CO2 emissions,million metric tons of CO2,按部门划分的二氧化碳排放总量.xlsx,Total,1960,2023,3328
-total,Total energy average price,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Total,1970,2023,2808
 total,Total energy CO2 emissions,million metric tons CO2,按来源划分的二氧化碳排放总量.xlsx,Total,1960,2023,3328
-total,Electricity total consumption (electricity sales to ultimate customers),million kilowatthours,向最终客户销售电力、总和住宅、总和人均.xlsx,Total,1960,2023,3328
+total,Total energy average price,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Total,1970,2023,2808
 total,Total energy total expenditures,million dollars,按最终用途部门分列的能源总支出.xlsx,Total,1970,2023,2808
+total,Electricity total consumption (electricity sales to ultimate customers),million kilowatthours,向最终客户销售电力、总和住宅、总和人均.xlsx,Total,1960,2023,3328
 total-consumption,Total energy consumption,billion Btu,按最终用途部门划分的总能源消耗.xlsx,Total consumption,1960,2023,3328
 total-consumption,Total energy consumption per capita,million Btu,按最终用途部门分列的人均能源消耗总量.xlsx,Total consumption,1960,2023,3328
 total-per-capita,Electricity total consumption (electricity sales to ultimate customers) per capita,kilowatthours,向最终客户销售电力、总和住宅、总和人均.xlsx,Total per capita,1960,2023,3328
 total-population,Resident population including armed forces,thousand,能源系列指标.xlsx,Total population,1960,2023,3328
 total-renewable-energy,Renewable energy total consumption,billion Btu,按来源划分的一次能源消耗.xlsx,Total renewable energy,1960,2023,3328
 transportation,Total energy CO2 emissions for the transportation sector,million metric tons of CO2,按部门划分的二氧化碳排放总量.xlsx,Transportation,1960,2023,3328
-transportation-sector,Total energy expenditures in the transportation sector,million dollars,按最终用途部门分列的能源总支出.xlsx,Transportation sector,1970,2023,2808
-transportation-sector,Total energy average price in the transportation sector,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Transportation sector,1970,2023,2808
-transportation-sector,Total energy consumption per capita in the transportation sector,million Btu,按最终用途部门分列的人均能源消耗总量.xlsx,Transportation sector,1960,2023,3328
 transportation-sector,Total energy consumption in the transportation sector,billion Btu,按最终用途部门划分的总能源消耗.xlsx,Transportation sector,1960,2023,3328
+transportation-sector,Total energy average price in the transportation sector,dollars per million Btu,按最终用途部门划分的能源总价格.xlsx,Transportation sector,1970,2023,2808
+transportation-sector,Total energy expenditures in the transportation sector,million dollars,按最终用途部门分列的能源总支出.xlsx,Transportation sector,1970,2023,2808
+transportation-sector,Total energy consumption per capita in the transportation sector,million Btu,按最终用途部门分列的人均能源消耗总量.xlsx,Transportation sector,1960,2023,3328
 wind-energy,Wind energy total consumption,billion Btu,按来源划分的可再生能源消费.xlsx,Wind energy,1960,2023,3328

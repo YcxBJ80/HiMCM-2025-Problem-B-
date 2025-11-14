@@ -210,6 +210,14 @@ SPORTS_FACTORS_METADATA = {
         "name": "Peak public transportation capacity",
         "unit": "passengers per hour",
     },
+    "avg_driving_time_to_nfl_states": {
+        "name": "Average driving time to other NFL states",
+        "unit": "seconds",
+    },
+    "avg_flight_time_to_nfl_states": {
+        "name": "Average flight time to other NFL states",
+        "unit": "seconds",
+    },
 }
 SUPPLEMENTAL_INDICATOR_PREFIXES = (
     "city-water-use-cbsa",
@@ -554,6 +562,13 @@ def _load_sports_factors_indicators(data_dir: Path) -> List[IndicatorFrame]:
     """Load sports factors indicators from CSV files."""
     frames: List[IndicatorFrame] = []
 
+    # Get NFL states list first
+    nfl_states = set()
+    capacity_file = data_dir / "nfl_stadium_capacity.csv"
+    if capacity_file.exists():
+        df_capacity = pd.read_csv(capacity_file)
+        nfl_states = set(df_capacity["State"].str.upper().unique())
+
     # Load NFL stadium capacity data
     capacity_file = data_dir / "nfl_stadium_capacity.csv"
     if capacity_file.exists():
@@ -660,6 +675,102 @@ def _load_sports_factors_indicators(data_dir: Path) -> List[IndicatorFrame]:
             ))
         except Exception as exc:
             LOGGER.warning("Failed to load peak public transport capacity data: %s", exc)
+
+    # Load and process transport time data
+    transport_file = data_dir / "state_transport_stats.csv"
+    if transport_file.exists() and nfl_states:
+        try:
+            df_transport = pd.read_csv(transport_file)
+
+            # Filter to only NFL states
+            df_transport = df_transport[
+                (df_transport["State_A"].str.upper().isin(nfl_states)) &
+                (df_transport["State_B"].str.upper().isin(nfl_states))
+            ].copy()
+
+            # Calculate average times for each state
+            avg_times = []
+
+            for state in nfl_states:
+                # Driving time: average time between this state and other NFL states (bidirectional)
+                driving_times_a_to_b = df_transport[
+                    (df_transport["State_A"].str.upper() == state) &
+                    (df_transport["State_B"].str.upper() != state) &
+                    (df_transport["State_B"].str.upper().isin(nfl_states))
+                ]["Driving_Time_s"].dropna()
+
+                driving_times_b_to_a = df_transport[
+                    (df_transport["State_B"].str.upper() == state) &
+                    (df_transport["State_A"].str.upper() != state) &
+                    (df_transport["State_A"].str.upper().isin(nfl_states))
+                ]["Driving_Time_s"].dropna()
+
+                all_driving_times = pd.concat([driving_times_a_to_b, driving_times_b_to_a])
+
+                # Flight time: average time between this state and other NFL states (bidirectional)
+                flight_times_a_to_b = df_transport[
+                    (df_transport["State_A"].str.upper() == state) &
+                    (df_transport["State_B"].str.upper() != state) &
+                    (df_transport["State_B"].str.upper().isin(nfl_states))
+                ]["Flight_Time_s"].dropna()
+
+                flight_times_b_to_a = df_transport[
+                    (df_transport["State_B"].str.upper() == state) &
+                    (df_transport["State_A"].str.upper() != state) &
+                    (df_transport["State_A"].str.upper().isin(nfl_states))
+                ]["Flight_Time_s"].dropna()
+
+                all_flight_times = pd.concat([flight_times_a_to_b, flight_times_b_to_a])
+
+                avg_driving = all_driving_times.mean() if len(all_driving_times) > 0 else None
+                avg_flight = all_flight_times.mean() if len(all_flight_times) > 0 else None
+
+                if avg_driving is not None or avg_flight is not None:
+                    # Convert state name back to code format for consistency
+                    state_code = _state_name_to_code(state)
+                    if state_code:
+                        avg_times.append({
+                            "region": state_code,
+                            "avg_driving_time": avg_driving,
+                            "avg_flight_time": avg_flight
+                        })
+
+            # Create driving time indicator
+            if any(item["avg_driving_time"] is not None for item in avg_times):
+                driving_data = [
+                    {"indicator_id": "sports-factors-avg-driving-time-to-nfl-states", "region": item["region"], "year": ENVIRONMENT_DEFAULT_YEAR, "value": item["avg_driving_time"]}
+                    for item in avg_times if item["avg_driving_time"] is not None
+                ]
+                if driving_data:
+                    df_driving = pd.DataFrame(driving_data)
+                    frames.append(IndicatorFrame(
+                        workbook="state_transport_stats.csv",
+                        sheet="driving_times",
+                        indicator_id="sports-factors-avg-driving-time-to-nfl-states",
+                        indicator_name=SPORTS_FACTORS_METADATA["avg_driving_time_to_nfl_states"]["name"],
+                        unit=SPORTS_FACTORS_METADATA["avg_driving_time_to_nfl_states"]["unit"],
+                        frame=df_driving,
+                    ))
+
+            # Create flight time indicator
+            if any(item["avg_flight_time"] is not None for item in avg_times):
+                flight_data = [
+                    {"indicator_id": "sports-factors-avg-flight-time-to-nfl-states", "region": item["region"], "year": ENVIRONMENT_DEFAULT_YEAR, "value": item["avg_flight_time"]}
+                    for item in avg_times if item["avg_flight_time"] is not None
+                ]
+                if flight_data:
+                    df_flight = pd.DataFrame(flight_data)
+                    frames.append(IndicatorFrame(
+                        workbook="state_transport_stats.csv",
+                        sheet="flight_times",
+                        indicator_id="sports-factors-avg-flight-time-to-nfl-states",
+                        indicator_name=SPORTS_FACTORS_METADATA["avg_flight_time_to_nfl_states"]["name"],
+                        unit=SPORTS_FACTORS_METADATA["avg_flight_time_to_nfl_states"]["unit"],
+                        frame=df_flight,
+                    ))
+
+        except Exception as exc:
+            LOGGER.warning("Failed to load transport time data: %s", exc)
 
     return frames
 

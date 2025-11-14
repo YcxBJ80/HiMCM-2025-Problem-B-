@@ -54,14 +54,14 @@ geothermal,能源消费类
 hdd,气候环境类
 hydropower,能源消费类
 industrial,碳排放类
-industrial-sector,能源消费类
+industrial-sector,能源价格类
 natural-gas,能源消费类
 natural-gas-expenditures,能源价格类
 natural-gas-prices,能源价格类
 nuclear,能源消费类
 nuclear-electric-power,能源消费类
 other-biofuels,能源消费类
-petroleum,能源消费类
+petroleum,碳排放类
 petroleum-expenditures,能源价格类
 petroleum-prices,能源价格类
 prices,能源价格类
@@ -69,8 +69,10 @@ real-gdp,经济人口类
 renewable-diesel,能源消费类
 residential,气候环境类
 residential-per-capita,气候环境类
-residential-sector,能源价格类
+residential-sector,能源消费类
 solar-energy,能源消费类
+sports-factors-avg-driving-time-to-nfl-states,比赛间交通时间类
+sports-factors-avg-flight-time-to-nfl-states,比赛间交通时间类
 sports-factors-nfl-stadium-capacity,比赛因素类
 sports-factors-peak-public-transport-capacity,比赛因素类
 sports-factors-stadium-hotel-distance-avg,比赛因素类
@@ -78,7 +80,7 @@ state-waste-data-raw-data-table-landfilled-disposed-msw-tons,废弃物管理类
 state-waste-data-raw-data-table-recycled-msw-tons,废弃物管理类
 state-waste-data-raw-data-table-recycling-rate-if-reported-calculatable,废弃物管理类
 state-waste-data-raw-data-table-total-msw-generated-tons,废弃物管理类
-total,能源价格类
+total,能源消费类
 total-consumption,能源消费类
 total-per-capita,能源消费类
 total-population,经济人口类

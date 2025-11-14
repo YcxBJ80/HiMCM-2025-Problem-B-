@@ -151,6 +151,13 @@ CATEGORY_KEYWORDS = {
         ],
         "exclude_keywords": [],
     },
+    "比赛间交通时间类": {
+        "keywords": [
+            "sports-factors-avg-driving-time-to-nfl-states",
+            "sports-factors-avg-flight-time-to-nfl-states",
+        ],
+        "exclude_keywords": [],
+    },
 }
 
 INDICATOR_CATEGORY_OVERRIDES = {
@@ -166,6 +173,8 @@ INDICATOR_CATEGORY_OVERRIDES = {
     "sports-factors-nfl-stadium-capacity": "比赛因素类",
     "sports-factors-stadium-hotel-distance-avg": "比赛因素类",
     "sports-factors-peak-public-transport-capacity": "比赛因素类",
+    "sports-factors-avg-driving-time-to-nfl-states": "比赛间交通时间类",
+    "sports-factors-avg-flight-time-to-nfl-states": "比赛间交通时间类",
 }
 
 
