@@ -214,6 +214,7 @@ CATEGORY_EN_NAMES = {
     "城市水资源类": "Urban Water Resources",
     "航空出行类": "Air Travel Connectivity",
     "废弃物管理类": "Waste Management",
+    "可再生能源类": "Renewable Energy",
     "比赛因素类": "Sports Event Factors",
     "比赛间交通时间类": "Inter-Match Transportation Time",
 }
