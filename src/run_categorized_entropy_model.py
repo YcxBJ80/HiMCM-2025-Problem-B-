@@ -49,7 +49,20 @@ def build_feature_matrix(
         pivot = pivot.drop(index="US")
         LOGGER.info("Excluded national aggregate 'US' from scoring matrix")
     feature_coverage = pivot.notna().mean(axis=0)
-    pivot = pivot.loc[:, feature_coverage >= min_feature_coverage]
+
+    # 为比赛因素指标使用更低的覆盖率要求，因为这些数据可能只在有NFL球队的州可用
+    sports_indicators = [col for col in pivot.columns if col.startswith('sports-factors-')]
+    regular_indicators = [col for col in pivot.columns if not col.startswith('sports-factors-')]
+
+    # 对常规指标使用标准覆盖率要求
+    regular_mask = feature_coverage[regular_indicators] >= min_feature_coverage
+
+    # 对比赛因素指标使用更低的覆盖率要求（只要有数据即可）
+    sports_mask = feature_coverage[sports_indicators] >= 0.1  # 只要10%的州有数据
+
+    # 合并筛选结果
+    final_mask = pd.concat([regular_mask, sports_mask])
+    pivot = pivot.loc[:, final_mask]
     if pivot.shape[1] == 0:
         raise RuntimeError(
             "No indicators satisfied the feature coverage threshold. "
@@ -111,9 +124,14 @@ def compute_category_scores(
         return None, None, None
     
     category_features = features[available_indicators].copy()
-    
-    # 移除全为NaN的列
-    category_features = category_features.loc[:, category_features.notna().any(axis=0)]
+
+    # 对于比赛因素指标，用0填充NaN值（因为没有比赛数据的州可以视为0）
+    # 对于其他指标，移除全为NaN的列
+    if category == "比赛因素类":
+        category_features = category_features.fillna(0)
+    else:
+        # 移除全为NaN的列
+        category_features = category_features.loc[:, category_features.notna().any(axis=0)]
     
     if category_features.shape[1] == 0:
         LOGGER.warning("分类 '%s' 没有有效数据", category)
@@ -196,6 +214,7 @@ CATEGORY_EN_NAMES = {
     "城市水资源类": "Urban Water Resources",
     "航空出行类": "Air Travel Connectivity",
     "废弃物管理类": "Waste Management",
+    "比赛因素类": "Sports Event Factors",
 }
 
 

@@ -143,6 +143,14 @@ CATEGORY_KEYWORDS = {
         ],
         "exclude_keywords": [],
     },
+    "比赛因素类": {
+        "keywords": [
+            "sports-factors-nfl-stadium-capacity",
+            "sports-factors-stadium-hotel-distance-avg",
+            "sports-factors-peak-public-transport-capacity",
+        ],
+        "exclude_keywords": [],
+    },
 }
 
 INDICATOR_CATEGORY_OVERRIDES = {
@@ -155,6 +163,9 @@ INDICATOR_CATEGORY_OVERRIDES = {
     "airtravel-cy2023-cy22-enplanements": "航空出行类",
     "airtravel-cy2023-enplanement-growth": "航空出行类",
     "airtravel-cy2023-airport-count": "航空出行类",
+    "sports-factors-nfl-stadium-capacity": "比赛因素类",
+    "sports-factors-stadium-hotel-distance-avg": "比赛因素类",
+    "sports-factors-peak-public-transport-capacity": "比赛因素类",
 }
 
 

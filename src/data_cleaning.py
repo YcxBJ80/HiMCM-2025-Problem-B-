@@ -197,10 +197,25 @@ STATE_WASTE_COLUMN_METADATA = {
         "unit": "short tons",
     },
 }
+SPORTS_FACTORS_METADATA = {
+    "nfl_stadium_capacity": {
+        "name": "NFL stadium average capacity",
+        "unit": "seats",
+    },
+    "stadium_hotel_distance_avg": {
+        "name": "Average distance from NFL stadium to nearest hotels",
+        "unit": "meters",
+    },
+    "peak_public_transport_capacity": {
+        "name": "Peak public transportation capacity",
+        "unit": "passengers per hour",
+    },
+}
 SUPPLEMENTAL_INDICATOR_PREFIXES = (
     "city-water-use-cbsa",
     "airtravel-cy2023",
     "state-waste-data",
+    "sports-factors",
 )
 
 
@@ -535,6 +550,120 @@ def _load_waste_indicators(workbook: Path) -> List[IndicatorFrame]:
     return frames
 
 
+def _load_sports_factors_indicators(data_dir: Path) -> List[IndicatorFrame]:
+    """Load sports factors indicators from CSV files."""
+    frames: List[IndicatorFrame] = []
+
+    # Load NFL stadium capacity data
+    capacity_file = data_dir / "nfl_stadium_capacity.csv"
+    if capacity_file.exists():
+        try:
+            df_capacity = pd.read_csv(capacity_file)
+            df_capacity["State"] = df_capacity["State"].str.upper()
+
+            # Convert state names to codes
+            df_capacity["region"] = df_capacity["State"].apply(_state_name_to_code)
+
+            # Remove rows where state code couldn't be determined
+            df_capacity = df_capacity[df_capacity["region"].notna()].copy()
+
+            # Group by state and calculate average capacity
+            state_capacity = df_capacity.groupby("region")["Capacity"].mean().reset_index()
+            state_capacity = state_capacity.rename(columns={"Capacity": "value"})
+
+            # Create indicator for NFL stadium capacity
+            indicator_id = "sports-factors-nfl-stadium-capacity"
+            tidy_capacity = pd.DataFrame({
+                "indicator_id": indicator_id,
+                "region": state_capacity["region"],
+                "year": ENVIRONMENT_DEFAULT_YEAR,
+                "value": state_capacity["value"],
+            })
+
+            frames.append(IndicatorFrame(
+                workbook="nfl_stadium_capacity.csv",
+                sheet="data",
+                indicator_id=indicator_id,
+                indicator_name=SPORTS_FACTORS_METADATA["nfl_stadium_capacity"]["name"],
+                unit=SPORTS_FACTORS_METADATA["nfl_stadium_capacity"]["unit"],
+                frame=tidy_capacity,
+            ))
+        except Exception as exc:
+            LOGGER.warning("Failed to load NFL stadium capacity data: %s", exc)
+
+    # Load NFL stadium hotels distance data
+    hotels_file = data_dir / "nfl_stadium_hotels_from_gmaps.csv"
+    if hotels_file.exists():
+        try:
+            df_hotels = pd.read_csv(hotels_file)
+            df_hotels["state"] = df_hotels["state"].str.upper()
+
+            # Convert state names to codes
+            df_hotels["region"] = df_hotels["state"].apply(_state_name_to_code)
+
+            # Remove rows where state code couldn't be determined
+            df_hotels = df_hotels[df_hotels["region"].notna()].copy()
+
+            # Convert distance from string to numeric (remove 'm' suffix if present)
+            df_hotels["distance_m"] = pd.to_numeric(
+                df_hotels["distance_m"].astype(str).str.replace(',', '').str.extract(r'(\d+\.?\d*)')[0],
+                errors="coerce"
+            )
+
+            # Group by state and calculate average distance
+            state_distance = df_hotels.groupby("region")["distance_m"].mean().reset_index()
+            state_distance = state_distance.rename(columns={"distance_m": "value"})
+
+            # Create indicator for stadium to hotel distance
+            indicator_id = "sports-factors-stadium-hotel-distance-avg"
+            tidy_distance = pd.DataFrame({
+                "indicator_id": indicator_id,
+                "region": state_distance["region"],
+                "year": ENVIRONMENT_DEFAULT_YEAR,
+                "value": state_distance["value"],
+            })
+
+            frames.append(IndicatorFrame(
+                workbook="nfl_stadium_hotels_from_gmaps.csv",
+                sheet="data",
+                indicator_id=indicator_id,
+                indicator_name=SPORTS_FACTORS_METADATA["stadium_hotel_distance_avg"]["name"],
+                unit=SPORTS_FACTORS_METADATA["stadium_hotel_distance_avg"]["unit"],
+                frame=tidy_distance,
+            ))
+        except Exception as exc:
+            LOGGER.warning("Failed to load NFL stadium hotels distance data: %s", exc)
+
+    # Load peak public transport capacity data
+    transport_file = data_dir / "peak_capacity_by_state_2023.csv"
+    if transport_file.exists():
+        try:
+            df_transport = pd.read_csv(transport_file)
+            df_transport["State"] = df_transport["State"].str.upper()
+
+            # Create indicator for peak public transport capacity
+            indicator_id = "sports-factors-peak-public-transport-capacity"
+            tidy_transport = pd.DataFrame({
+                "indicator_id": indicator_id,
+                "region": df_transport["State"],
+                "year": ENVIRONMENT_DEFAULT_YEAR,
+                "value": df_transport["Peak_Capacity"],
+            })
+
+            frames.append(IndicatorFrame(
+                workbook="peak_capacity_by_state_2023.csv",
+                sheet="data",
+                indicator_id=indicator_id,
+                indicator_name=SPORTS_FACTORS_METADATA["peak_public_transport_capacity"]["name"],
+                unit=SPORTS_FACTORS_METADATA["peak_public_transport_capacity"]["unit"],
+                frame=tidy_transport,
+            ))
+        except Exception as exc:
+            LOGGER.warning("Failed to load peak public transport capacity data: %s", exc)
+
+    return frames
+
+
 def _load_environment_indicator_frames(workbook: Path) -> List[IndicatorFrame]:
     if not workbook.exists():
         return []
@@ -615,6 +744,24 @@ def load_all_indicators(data_dir: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
                     "observations": len(indicator.frame),
                 }
             )
+
+    # Load sports factors indicators
+    LOGGER.info("Loading sports factors indicators from CSV files")
+    sports_frames = _load_sports_factors_indicators(data_dir)
+    for indicator in sports_frames:
+        records.append(indicator.frame)
+        metadata_rows.append(
+            {
+                "indicator_id": indicator.indicator_id,
+                "indicator_name": indicator.indicator_name,
+                "unit": indicator.unit,
+                "workbook": indicator.workbook,
+                "sheet": indicator.sheet,
+                "min_year": indicator.frame["year"].min(),
+                "max_year": indicator.frame["year"].max(),
+                "observations": len(indicator.frame),
+            }
+        )
     combined = pd.concat(records, ignore_index=True)
     metadata = pd.DataFrame(metadata_rows).sort_values("indicator_id").reset_index(
         drop=True
